@@ -5,8 +5,10 @@
 
 package com.proyecto1.ExamenProyecto1;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  *
@@ -19,7 +21,9 @@ public class DatabaseConnection {
     private static final String USER = "root";
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER);
+        Properties properties = new Properties();
+        properties.setProperty("user", USER);
+        return DriverManager.getConnection(URL, properties);
     }
 
 }
