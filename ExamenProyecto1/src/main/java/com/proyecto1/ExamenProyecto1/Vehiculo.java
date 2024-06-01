@@ -8,7 +8,8 @@ package com.proyecto1.ExamenProyecto1;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.Date;
+// import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
@@ -24,19 +25,25 @@ public class Vehiculo {
     private String marca;
     private int potencia;
     private Date fechaCompra;
+
+
+    public Vehiculo(String tipo, String marca, int potencia, Date fechaCompra) {
+        this.tipo = tipo;
+        this.marca = marca;
+        this.potencia = potencia;
+        this.fechaCompra = fechaCompra;
+        VehiculoDAO.insertVehiculo(tipo, marca, potencia, fechaCompra);
+    }
+
+    public String getVehiculo() {
+        return VehiculoDAO.getUserVehiculo(this.marca);
+    }
+
+    public String insertVehiculo() {
+        return VehiculoDAO.insertVehiculo(this.tipo, this.marca, this.potencia);
+    }
 }
 
-public Vehiculo(String tipo, String marca, int potencia, Date fechaCompra){
-    this.tipo = tipo;
-    this.marca = marca;
-    this.potencia = potencia;
-    this.fechaCompra = fechaCompra;
-    VehiculoDAO.printVehiculoDetails(tipo,marca,potencia,fechaCompra);
-}
-
-public String getVehiculo() {
-    return VehiculoDAO.printVehiculoDetails(this.tipo, this.modelo);
-}
 
 // Getters and Setters
 /*
@@ -59,22 +66,4 @@ fechaCompra DATETIME DEFAULT NOW(),
 
 PRIMARY KEY (id_vehiculo)
 );
- */
-
-
-/*
-public class Personas {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id_persona;
-    private String nombre_persona;
-    private String apellido_persona;
-    private String tipo;
-    private String DNI;
-    private String correo_persona;
-    private int telefono_persona;
-    private String contrasena_persona;
-    private Date fechaNacimiento_persona;
-    private String direccion_persona;
-    private Date fechaCreacion_persona;
  */

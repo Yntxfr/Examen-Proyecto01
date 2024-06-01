@@ -25,3 +25,8 @@ public class ExamenProyecto1Application {
 	}
 
 }
+
+/*
+Añadir llamadas a Vehiculo DAO desde aqui para que se vea en la consola
+El proceso es main -> vehiculo -> vehiculoDAO
+ */
