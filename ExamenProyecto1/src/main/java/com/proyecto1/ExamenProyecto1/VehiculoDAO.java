@@ -5,15 +5,9 @@
 
 package com.proyecto1.ExamenProyecto1;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import java.sql.*;
-// import java.util.Date;
-import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import org.springframework.http.HttpStatus;
 
 /**
  *
@@ -21,97 +15,106 @@ import org.springframework.http.HttpStatus;
  */
 
 public class VehiculoDAO {
-    public static void printVehiculoDetails(){
-        String query = "SELECT * FROM Vehiculo;";
-        try(Connection conn = DatabaseConnection.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query)){
+    public static List<Vehiculo> getAllVehiculos() {
+        List<Vehiculo> vehiculos = new ArrayList<>();
+        String query = "SELECT * FROM Vehiculo";
 
-            while(rs.next()){
-                int id = rs.getInt("id");
-                String tipo = rs.getString("tipo");
-                String marca = rs.getString("marca");
-                int potencia = rs.getInt("potencia");
-                Date fechaCompra = rs.getDate("fechaCompra");
-                System.out.println(" ID: " + id + " , tipo: " + tipo + " , marca: " + marca + " , potencia: " + potencia + " , fechaCompra: " + fechaCompra);
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                Vehiculo vehiculo = new Vehiculo(
+                        rs.getString("tipo"),
+                        rs.getString("marca"),
+                        rs.getInt("potencia"),
+                        rs.getDate("fechaCompra")
+                );
+                vehiculo.setId(rs.getLong("id_vehiculo"));
+                vehiculos.add(vehiculo);
             }
-
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return vehiculos;
     }
 
-    public static void insertVehiculo(String tipo, String marca, int potencia, Date fechaCompra){
-        String query = "INSERT INTO vehiculo(tipo, marca, potencia, fechaCompra) VALUES (?,?,?,?);";
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(query)){
+    public static Vehiculo getVehiculoById(Long id) {
+        Vehiculo vehiculo = null;
+        String query = "SELECT * FROM Vehiculo WHERE id_vehiculo = ?";
 
-            pstmt.setString(1, tipo);
-            pstmt.setString(2, marca);
-            pstmt.setInt(3, potencia);
-            pstmt.setDate(4, fechaCompra);
-            pstmt.executeUpdate();
-            System.out.println("Nuevo vehiculo registrado!");
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    public static void deleteVehiculo(int id, String tipo){
-        String query = "DELETE FROM vehiculo where id = ? and tipo = ?;";
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(query)){
-            pstmt.setInt(1, id);
-            pstmt.setString(2, tipo);
-            pstmt.executeUpdate();
-
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    public static void updateVehiculo(String tipo, String modelo, int potencia, Date fechaCompra){
-        String query = "UPDATE vehiculo ";
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(query)){
-
-            pstmt.setString(1, tipo);
-            pstmt.setString(2, modelo);
-            pstmt.setInt(3, potencia);
-            pstmt.setDate(4, fechaCompra);
-            pstmt.executeUpdate();
-
-            System.out.println("Email actualizado!");
-
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    public static String getUserVehiculo(String marca){
-        String fechaCompra = "";
-        String query = "SELECT marca FROM list where fechaCompra = ?;";
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(query)){
-
-            pstmt.setString(1,marca);
-
+            pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
 
-            while(rs.next()){
-                fechaCompra = rs.getString("fechaCompra");
-                System.out.println(" fechaCompra: " + fechaCompra );
+            if (rs.next()) {
+                vehiculo = new Vehiculo(
+                        rs.getString("tipo"),
+                        rs.getString("marca"),
+                        rs.getInt("potencia"),
+                        rs.getDate("fechaCompra")
+                );
+                vehiculo.setId(rs.getLong("id_vehiculo"));
             }
-
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return fechaCompra;
+
+        return vehiculo;
     }
 
+    public static void insertVehiculo(Vehiculo vehiculo) {
+        String query = "INSERT INTO Vehiculo (tipo, marca, potencia, fechaCompra) VALUES (?, ?, ?, ?)";
 
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, vehiculo.getTipo());
+            pstmt.setString(2, vehiculo.getMarca());
+            pstmt.setInt(3, vehiculo.getPotencia());
+            pstmt.setDate(4, vehiculo.getFechaCompra());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateVehiculo(Vehiculo vehiculo) {
+        String query = "UPDATE Vehiculo SET tipo = ?, marca = ?, potencia = ?, fechaCompra = ? WHERE id_vehiculo = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, vehiculo.getTipo());
+            pstmt.setString(2, vehiculo.getMarca());
+            pstmt.setInt(3, vehiculo.getPotencia());
+            pstmt.setDate(4, vehiculo.getFechaCompra());
+            pstmt.setLong(5, vehiculo.getId());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteVehiculo(Long id) {
+        String query = "DELETE FROM Vehiculo WHERE id_vehiculo = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setLong(1, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
+
+
+
 
 /*
  private String tipo;

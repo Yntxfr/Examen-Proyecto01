@@ -9,13 +9,13 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.proyecto1</groupId>
-	<artifactId>ExamenProyecto1</artifactId>
+	<artifactId>SpringbootREST</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ExamenProyecto1</name>
 	<description>Examen Proyecto 1</description>
 
 	<properties>
-		<java.version>22</java.version>
+		<java.version>17</java.version>
 	</properties>
 
 	<dependencies>
@@ -52,6 +52,20 @@
 			<artifactId>jaxb-impl</artifactId>
 			<version>2.3.3</version>
 		</dependency>
+
+		<!-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
+		</dependency>
+		<-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+
+
 	</dependencies>
 
 	<repositories>
